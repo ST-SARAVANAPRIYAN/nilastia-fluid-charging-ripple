@@ -42,7 +42,7 @@ Variants {
             property real progress: 0
             property real centerX: 0.5
             property real centerY: 1.0 // Start at bottom center (where cable plugs in)
-            property bool playing: progress > 0 && progress < 1.0
+            property bool playing: rippleAnim.running || rippleAnimReverse.running
 
             // Normalized distance calculation to ensure consistent expansion speed
             readonly property real maxDistance: {
@@ -86,12 +86,47 @@ Variants {
                 to: 1.0
                 duration: overlay.duration
                 easing.type: Easing.OutExpo
+                onStarted: overlay.opacity = 1.0
                 onFinished: overlay.progress = 0
+            }
+
+            SequentialAnimation {
+                id: rippleAnimReverse
+
+                ScriptAction {
+                    script: {
+                        overlay.opacity = 1.0;
+                    }
+                }
+
+                ParallelAnimation {
+                    NumberAnimation {
+                        target: overlay
+                        property: "progress"
+                        from: 1.0
+                        to: 0.0
+                        duration: overlay.duration
+                        easing.type: Easing.InCubic
+                    }
+                    NumberAnimation {
+                        target: overlay
+                        property: "opacity"
+                        from: 1.0
+                        to: 0.0
+                        duration: overlay.duration
+                        easing.type: Easing.InCubic
+                    }
+                }
             }
 
             function trigger() {
                 console.log("[ChargingRipple] trigger() AOSP Shader ripple animation started!");
                 rippleAnim.restart();
+            }
+
+            function triggerReverse() {
+                console.log("[ChargingRipple] triggerReverse() AOSP Shader ripple animation started!");
+                rippleAnimReverse.restart();
             }
 
             Connections {
@@ -100,6 +135,8 @@ Variants {
                     console.log("[ChargingRipple] onOnBatteryChanged: UPower.onBattery =", UPower.onBattery);
                     if (!UPower.onBattery) {
                         overlay.trigger();
+                    } else {
+                        overlay.triggerReverse();
                     }
                 }
             }
@@ -109,6 +146,12 @@ Variants {
                     console.log("[ChargingRipple] Triggered via IPC!");
                     overlay.trigger();
                 }
+                
+                function triggerReverse(): void {
+                    console.log("[ChargingRipple] Triggered reverse via IPC!");
+                    overlay.triggerReverse();
+                }
+                
                 target: "charging-ripple"
             }
         }
