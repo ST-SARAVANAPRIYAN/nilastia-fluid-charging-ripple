@@ -45,16 +45,23 @@ void main() {
     vec2 dvec = uv - ubuf.center;
     dvec.x *= ubuf.aspect;
     
-    float d = length(dvec);
+    // Flatten the shape vertically to create an elegant horizontal ellipse
+    dvec.y *= 1.6;
+    
+    // Calculate angle for organic wavy boundary distortion
+    float angle = atan(dvec.y, dvec.x);
+    float wave = sin(angle * 6.0 - ubuf.progress * 3.5) * 0.04 * (1.0 - ubuf.progress * 0.7);
+    
+    float d = length(dvec) + wave;
     float p = ubuf.progress;
     float rw = ubuf.ringWidth;
 
     // 1. Expansion mask (AOSP style) — ring width configurable
     float ring = smoothstep(p - rw, p, d) * (1.0 - smoothstep(p, p + rw, d));
     
-    // 2. Sparkle/Noise layer — intensity configurable
+    // 2. Sparkle/Noise layer — intensity configurable (denser sparkles with lower pow threshold)
     float noise = hash(uv * 250.0 + p * 0.1);
-    float sparkles = pow(noise, 18.0) * ring * 5.0 * ubuf.sparkleIntensity;
+    float sparkles = pow(noise, 13.0) * ring * 7.0 * ubuf.sparkleIntensity;
     
     // 3. Soft Glow — intensity configurable
     float glow = exp(-pow(d - p, 2.0) * 60.0) * 0.4 * ubuf.glowIntensity;

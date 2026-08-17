@@ -33,10 +33,10 @@ Variants {
 
             // --- Configuration ---
             property color color: Colours.palette.m3primary || "#8839ef"
-            property int duration: 1000
+            property int duration: 1600
             property real sparkleIntensity: 1.0
             property real glowIntensity: 1.0
-            property real ringWidth: 0.15
+            property real ringWidth: 0.25
 
             // --- State ---
             property real progress: 0
