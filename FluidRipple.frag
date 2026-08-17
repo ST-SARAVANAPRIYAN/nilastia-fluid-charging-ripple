@@ -50,7 +50,14 @@ void main() {
     
     // Calculate angle for organic wavy boundary distortion
     float angle = atan(dvec.y, dvec.x);
-    float wave = sin(angle * 6.0 - ubuf.progress * 3.5) * 0.04 * (1.0 - ubuf.progress * 0.7);
+    
+    // Combine multiple prime-frequency waves + angle-based noise to simulate randomized micro-wavy boundaries
+    float w1 = sin(angle * 10.0 - ubuf.progress * 5.0) * 0.035;
+    float w2 = cos(angle * 19.0 + ubuf.progress * 8.0) * 0.015;
+    float w3 = sin(angle * 37.0 - ubuf.progress * 12.0) * 0.008;
+    float noiseJitter = (hash(vec2(angle * 50.0, ubuf.progress * 1.5)) - 0.5) * 0.012;
+    
+    float wave = (w1 + w2 + w3 + noiseJitter) * (1.0 - ubuf.progress * 0.6);
     
     float d = length(dvec) + wave;
     float p = ubuf.progress;
