@@ -20,6 +20,7 @@ Variants {
         WlrLayershell.exclusionMode: ExclusionMode.Ignore
         WlrLayershell.layer: WlrLayer.Overlay
         surfaceFormat.opaque: false
+        mask: Region {}
 
         anchors.top: true
         anchors.bottom: true
