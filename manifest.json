@@ -1,0 +1,12 @@
+{
+  "name": "FluidChargingRipple",
+  "author": "saravana",
+  "version": "1.0.0",
+  "description": "Premium AOSP-inspired fluid charging ripple animation overlay.",
+  "entryPoints": [
+    {
+      "type": "Custom",
+      "source": "ChargingRipple.qml"
+    }
+  ]
+}
