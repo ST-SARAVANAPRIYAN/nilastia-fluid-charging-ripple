@@ -33,7 +33,7 @@ Variants {
 
             // --- Configuration ---
             property color color: Colours.palette.m3primary || "#8839ef"
-            property int duration: 2500
+            property int duration: 1000
             property real sparkleIntensity: 1.0
             property real glowIntensity: 1.0
             property real ringWidth: 0.15
@@ -67,8 +67,8 @@ Variants {
                 visible: overlay.playing
 
                 property color color: overlay.color
-                // Map 0-1 animation progress to the actual physical distance needed
-                property real progress: overlay.progress * overlay.maxDistance
+                // Map 0-1 animation progress to the actual physical distance needed, scaled up to ensure it exits the screen
+                property real progress: overlay.progress * overlay.maxDistance * 1.6
                 property point center: Qt.point(overlay.centerX, overlay.centerY)
                 property real aspect: width / height
                 property real sparkleIntensity: overlay.sparkleIntensity
@@ -85,7 +85,7 @@ Variants {
                 from: 0
                 to: 1.0
                 duration: overlay.duration
-                easing.type: Easing.OutCubic
+                easing.type: Easing.OutExpo
                 onFinished: overlay.progress = 0
             }
 
