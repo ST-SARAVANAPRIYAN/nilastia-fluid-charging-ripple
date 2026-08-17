@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Wayland
+import Quickshell.Io
 import Nilastia.Config
 import qs.components.containers
 import qs.services
@@ -9,6 +10,10 @@ import Quickshell.Services.UPower
 Variants {
     id: root
     model: Screens.screens
+
+    Component.onCompleted: {
+        console.log("[ChargingRipple] Variants component completed! Screens.screens count =", Screens.screens.length);
+    }
 
     StyledWindow {
         id: win
