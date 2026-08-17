@@ -133,6 +133,14 @@ Variants {
                 }
             }
 
+            IpcHandler {
+                function trigger(): void {
+                    console.log("[ChargingRipple] Triggered via IPC!");
+                    overlay.trigger();
+                }
+                target: "charging-ripple"
+            }
+
             Timer {
                 id: animTimer
                 interval: 16
