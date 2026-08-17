@@ -29,49 +29,67 @@ Variants {
         Item {
             id: overlay
             anchors.fill: parent
-            visible: rippleAnim.running
 
-            // Spawns at bottom center (where battery charging ripple typically starts)
-            Rectangle {
-                id: ripple
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: -height / 2
-                anchors.horizontalCenter: parent.horizontalCenter
+            // --- Configuration ---
+            property color color: Colours.palette.m3primary || "#8839ef"
+            property int duration: 2500
+            property real sparkleIntensity: 1.0
+            property real glowIntensity: 1.0
+            property real ringWidth: 0.15
 
-                width: 150
-                height: 150
-                radius: 75
-                
-                color: Colours.palette.m3primary || "#8839ef"
-                opacity: 0.0
-                scale: 1.0
+            // --- State ---
+            property real progress: 0
+            property real centerX: 0.5
+            property real centerY: 1.0 // Start at bottom center (where cable plugs in)
+            property bool playing: progress > 0 && progress < 1.0
+
+            // Normalized distance calculation to ensure consistent expansion speed
+            readonly property real maxDistance: {
+                if (width <= 0 || height <= 0) return 1.0;
+                const aspect = width / height;
+                const dx0 = centerX * aspect;
+                const dx1 = (1.0 - centerX) * aspect;
+                const dy0 = centerY;
+                const dy1 = (1.0 - centerY);
+
+                return Math.max(
+                    Math.sqrt(dx0*dx0 + dy0*dy0),
+                    Math.sqrt(dx1*dx1 + dy0*dy0),
+                    Math.sqrt(dx0*dx0 + dy1*dy1),
+                    Math.sqrt(dx1*dx1 + dy1*dy1)
+                );
             }
 
-            SequentialAnimation {
-                id: rippleAnim
+            ShaderEffect {
+                id: shader
+                anchors.fill: parent
+                visible: overlay.playing
 
-                ParallelAnimation {
-                    NumberAnimation {
-                        target: ripple
-                        property: "scale"
-                        from: 0.1
-                        to: 25.0
-                        duration: 1500
-                        easing.type: Easing.OutQuart
-                    }
-                    NumberAnimation {
-                        target: ripple
-                        property: "opacity"
-                        from: 0.5
-                        to: 0.0
-                        duration: 1500
-                        easing.type: Easing.OutQuart
-                    }
-                }
+                property color color: overlay.color
+                // Map 0-1 animation progress to the actual physical distance needed
+                property real progress: overlay.progress * overlay.maxDistance
+                property point center: Qt.point(overlay.centerX, overlay.centerY)
+                property real aspect: width / height
+                property real sparkleIntensity: overlay.sparkleIntensity
+                property real glowIntensity: overlay.glowIntensity
+                property real ringWidth: overlay.ringWidth
+
+                fragmentShader: "FluidRipple.qsb"
+            }
+
+            NumberAnimation {
+                id: rippleAnim
+                target: overlay
+                property: "progress"
+                from: 0
+                to: 1.0
+                duration: overlay.duration
+                easing.type: Easing.OutCubic
+                onFinished: overlay.progress = 0
             }
 
             function trigger() {
-                console.log("[ChargingRipple] trigger() basic rounded ripple animation started!");
+                console.log("[ChargingRipple] trigger() AOSP Shader ripple animation started!");
                 rippleAnim.restart();
             }
 
