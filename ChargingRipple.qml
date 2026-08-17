@@ -31,9 +31,9 @@ Variants {
             id: overlay
             anchors.fill: parent
 
-            // --- Configuration ---
             property color color: Colours.palette.m3primary || "#8839ef"
-            property int duration: 1600
+            property int duration: 2200
+            property int reverseDuration: 1600
             property real sparkleIntensity: 1.0
             property real glowIntensity: 1.0
             property real ringWidth: 0.25
@@ -105,7 +105,7 @@ Variants {
                         property: "progress"
                         from: 1.0
                         to: 0.0
-                        duration: overlay.duration
+                        duration: overlay.reverseDuration
                         easing.type: Easing.InCubic
                     }
                     NumberAnimation {
@@ -113,7 +113,7 @@ Variants {
                         property: "opacity"
                         from: 1.0
                         to: 0.0
-                        duration: overlay.duration
+                        duration: overlay.reverseDuration
                         easing.type: Easing.InCubic
                     }
                 }
