@@ -4,6 +4,7 @@ import Quickshell.Wayland
 import Nilastia.Config
 import qs.components.containers
 import qs.services
+import Quickshell.Services.UPower
 
 Variants {
     id: root
@@ -36,6 +37,7 @@ Variants {
 
             // Trigger charging animation
             function trigger() {
+                console.log("[ChargingRipple] trigger() animation started!");
                 // Spawn particles
                 let list = [];
                 // Total particles: 100
@@ -124,6 +126,7 @@ Variants {
             Connections {
                 target: UPower
                 function onOnBatteryChanged() {
+                    console.log("[ChargingRipple] onOnBatteryChanged: UPower.onBattery =", UPower.onBattery);
                     if (!UPower.onBattery) {
                         overlay.trigger();
                     }
