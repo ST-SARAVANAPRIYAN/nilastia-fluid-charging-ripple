@@ -11,6 +11,8 @@ Variants {
     id: root
     model: Screens.screens
 
+    property var settings: null
+
     StyledWindow {
         id: win
         required property ShellScreen modelData
@@ -31,10 +33,10 @@ Variants {
             id: overlay
             anchors.fill: parent
 
-            property color color: Colours.palette.m3primary || "#8839ef"
-            property int duration: 2200
-            property int reverseDuration: 1600
-            property real sparkleIntensity: 1.0
+            property color color: root.settings && root.settings.rippleColor ? root.settings.rippleColor : (Colours.palette.m3primary || "#8839ef")
+            property int duration: root.settings && root.settings.waveSpeed ? (2200 / root.settings.waveSpeed) : 2200
+            property int reverseDuration: root.settings && root.settings.waveSpeed ? (1600 / root.settings.waveSpeed) : 1600
+            property real sparkleIntensity: root.settings && root.settings.noiseStrength !== undefined ? root.settings.noiseStrength : 1.0
             property real glowIntensity: 1.0
             property real ringWidth: 0.25
 

@@ -3,6 +3,7 @@
   "author": "saravana",
   "version": "1.0.0",
   "description": "Premium AOSP-inspired fluid charging ripple animation overlay.",
+  "settings": "Settings.qml",
   "entryPoints": [
     {
       "type": "custom",
