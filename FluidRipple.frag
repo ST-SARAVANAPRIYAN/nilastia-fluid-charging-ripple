@@ -29,6 +29,7 @@ layout(std140, binding = 0) uniform buf {
     float sparkleIntensity;
     float glowIntensity;
     float ringWidth;
+    float waveStrength;
     vec2 center;
     vec4 color;
 } ubuf;
@@ -57,7 +58,7 @@ void main() {
     float w3 = sin(angle * 37.0 - ubuf.progress * 18.0) * 0.015;
     float noiseJitter = (hash(vec2(angle * 50.0, ubuf.progress * 2.0)) - 0.5) * 0.024;
     
-    float wave = (w1 + w2 + w3 + noiseJitter) * (1.0 - ubuf.progress * 0.6);
+    float wave = (w1 + w2 + w3 + noiseJitter) * ubuf.waveStrength * (1.0 - ubuf.progress * 0.6);
     
     float d = length(dvec) + wave;
     float p = ubuf.progress;

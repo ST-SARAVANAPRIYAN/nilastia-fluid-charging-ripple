@@ -33,12 +33,21 @@ Variants {
             id: overlay
             anchors.fill: parent
 
-            property color color: root.settings && root.settings.rippleColor ? root.settings.rippleColor : (Colours.palette.m3primary || "#8839ef")
+            property color color: {
+                if (root.settings) {
+                    if (root.settings.autoColor === undefined || root.settings.autoColor) {
+                        return Colours.palette.m3primary || "#8839ef";
+                    }
+                    return root.settings.rippleColor || "#8839ef";
+                }
+                return Colours.palette.m3primary || "#8839ef";
+            }
             property int duration: root.settings && root.settings.waveSpeed ? (2200 / root.settings.waveSpeed) : 2200
             property int reverseDuration: root.settings && root.settings.waveSpeed ? (1600 / root.settings.waveSpeed) : 1600
             property real sparkleIntensity: root.settings && root.settings.noiseStrength !== undefined ? root.settings.noiseStrength : 1.0
             property real glowIntensity: 1.0
-            property real ringWidth: 0.25
+            property real ringWidth: root.settings && root.settings.ringWidth !== undefined ? root.settings.ringWidth : 0.25
+            property real waveStrength: root.settings && root.settings.waveStrength !== undefined ? root.settings.waveStrength : 1.0
 
             // --- State ---
             property real progress: 0
@@ -76,6 +85,7 @@ Variants {
                 property real sparkleIntensity: overlay.sparkleIntensity
                 property real glowIntensity: overlay.glowIntensity
                 property real ringWidth: overlay.ringWidth
+                property real waveStrength: overlay.waveStrength
 
                 fragmentShader: "FluidRipple.qsb"
             }
@@ -87,7 +97,13 @@ Variants {
                 from: 0
                 to: 1.0
                 duration: overlay.duration
-                easing.type: Easing.OutExpo
+                easing.type: {
+                    const t = root.settings && root.settings.animationType ? root.settings.animationType : "out-expo";
+                    if (t === "in-out-quad") return Easing.InOutQuad;
+                    if (t === "ease-out") return Easing.OutCubic;
+                    if (t === "linear") return Easing.Linear;
+                    return Easing.OutExpo;
+                }
                 onStarted: overlay.opacity = 1.0
                 onFinished: overlay.progress = 0
             }
